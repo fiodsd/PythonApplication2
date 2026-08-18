@@ -4,23 +4,30 @@ import math
 import random
 import sympy as sp
 
-x=[38,24,2,20,26,30,22]
-y=[20,29,4,18,22,32,8]
 
 "Набор, ведущий к самопересечению"
 x=[-4,-8,-11,1,3,30,28,-6,19,24,-2,24]
 y=[-3,-10,-1,-4,-5,20,14,5,18,20,2,16]
 
-x=random.sample(range(1, 50), 10)
-y=random.sample(range(1, 50), 10)
+"Случайный набор"
+nrandom=random.randint(3,20)
+x=random.sample(range(0, 50), nrandom)
+y=random.sample(range(0, 50), nrandom)
+
+"Основной экспериментальный набор"
+x=[38,24,2,20,26,30,22]
+y=[20,29,4,18,22,32,8]
 
 data=[x,y]
 length=len(x)
 data=np.transpose(data)
 
 "Initial data demonstration"
-#plt.scatter(x,y)
-#plt.show()
+plt.scatter(x,y)
+plt.title("Набор исходных точек\nРис.1")
+plt.show()
+
+
 "Part 1 - Convex X"
 full_data=[[],[],[],[]]
 full_data[0]=x;full_data[1]=y
@@ -70,14 +77,14 @@ while(c<len(ap)):
     #print(np.transpose(goodline))
 goodline_graph=np.transpose(goodline)
 
-#plt.scatter(x,y)
-#plt.scatter(goodline_graph[0],goodline_graph[1])
-#plt.plot(goodline_graph[0],goodline_graph[1])
-#plt.show()
+plt.scatter(x,y,color='black')
+plt.scatter(goodline_graph[0],goodline_graph[1])
+plt.title("Набор точек, образующих выпуклую оболочку\nРис.2")
+plt.show()
 
 
 
-"Part 2 - initial data for splines"
+"Part 2 - Initial data for splines"
 
 "Расположение точек по мере возрастания абсциссы"
 print("Точки до упорядочивания",goodline)
@@ -94,9 +101,9 @@ y_rightest=data_0[n-1][1]
 print("Крайняя правая точка",[x_rightest,y_rightest])
 
 
-"Демонстрация множества и крайней правой точки"
+#"Демонстрация множества и крайней правой точки"
 #plt.scatter(goodline_graph[0],goodline_graph[1])
-#plt.scatter(x_rightest,y_rightest)
+#plt.scatter(x_rightest,y_rightest,color='red')
 #plt.title("Множество и крайняя правая точки")
 #plt.show()
 
@@ -104,6 +111,13 @@ print("Крайняя правая точка",[x_rightest,y_rightest])
 "Вычисление внутренней точки множества"
 x0=sum(goodline_graph[0],0)/len(goodline_graph[0])
 y0=sum(goodline_graph[1],0)/len(goodline_graph[1])
+
+plt.scatter(goodline_graph[0],goodline_graph[1])
+plt.scatter(x_rightest,y_rightest,color='red')
+plt.scatter(x0,y0,color='red')
+plt.title("Множество с внутренней и крайней точками\nРис.3")
+plt.show()
+
 
 
 "Сдвиг множества в начало координат относительно внутренней точки"
@@ -113,14 +127,18 @@ for i in range(n):
     y_m[i]=data_0[i][1]-y0
 
 
-"Демонстрация смещенного множества с внутренней и крайней точками"
-#plt.scatter(x_m,y_m)
-#plt.scatter(x_m[n-1],y_m[n-1])
-#plt.scatter(0,0)
-#plt.title("Смещенное множество с внутренней и крайней точками")
-#plt.show()
+"Демонстрация множества после смещения"
+plt.scatter(x_m,y_m)
+plt.scatter(x_m[n-1],y_m[n-1],color='red')
+plt.scatter(0,0,color='red')
+plt.scatter(goodline_graph[0],goodline_graph[1],color='lightblue')
+plt.scatter(x_rightest,y_rightest,color='lightcoral')
+plt.scatter(x0,y0,color='lightcoral')
+plt.title("Множество до и после смещения\nРис.4")
+plt.show()
 
-
+xmgraph=x_m[n-1]
+ymgraph=y_m[n-1]
 
 
 kangle=(y_m[n-1])/(x_m[n-1]); phi=math.atan(kangle)
@@ -134,30 +152,26 @@ for i in range(0,n-1):
     x_r[i]=x_m[i]*math.cos(phi)+y_m[i]*math.sin(phi)
     y_r[i]=-x_m[i]*math.sin(phi)+y_m[i]*math.cos(phi)
 
-
-#x_r.append(x_lost)
-#y_r.append(0)
-
 print(np.transpose([[x_r],[y_r]]))
 
-#plt.scatter(x_r,y_r)
-#plt.scatter(0,0)
-#plt.title("Повернутое множество без крайней точки")
-#plt.show()
+
+plt.scatter(x_r,y_r)
+plt.scatter(x_lost,0,color='red')
+plt.scatter(x_m,y_m,color='lightblue')
+plt.scatter(xmgraph,ymgraph,color='lightcoral')
+plt.scatter(0,0,color='red')
+plt.plot([xmgraph,0],[ymgraph,0],linestyle='dotted',color='lightcoral')
+plt.title("Множество до и после поворота. Пунктир для\nдемонстрации угла поворота. Рис.5")
+plt.show()
+
+plt.scatter(x_r+[x_lost],y_r+[0])
+plt.scatter(0,0,color='red')
+plt.scatter(goodline_graph[0],goodline_graph[1],color='lightblue')
+plt.scatter(x0,y0,color='lightcoral')
+plt.title("Множество до и после преобразований\nРис.6")
+plt.show()
 
 
-#plt.scatter(x_r,y_r,color='blue')
-#plt.scatter(x_lost,0,color='blue')
-#plt.scatter(0,0)
-#plt.title("Повернутое множество")
-#plt.show()
-
-
-#plt.scatter(x_m,y_m)
-#plt.scatter(x_r,y_r)
-#plt.scatter(0,0)
-#plt.title("Смещенное и повернутое множества без крайней точки")
-#plt.show()
 
 
 r=[0]*len(x_r);theta=[0]*len(y_r)
@@ -181,16 +195,11 @@ for i in range(len(theta)):
 
 for_sort=np.transpose([theta,r])
 data_polar=sorted(for_sort,key=lambda for_sort:for_sort[0])
-#data_polar=np.transpose(data_polar)
 print(data_polar)
 
 
-
-#theta_rounded=[i for i in data_polar[0]]
-#r=[i for i in data_polar[1]]
 data_polar.insert(0,[theta_lost,r_lost]); r.append(r_lost)
 data_polar.append([2*math.pi,r_lost])
-
 
 
 print(data_polar[0])
@@ -201,15 +210,14 @@ print(data_polar_transposed)
 print(data_polar_transposed[0])
 print(data_polar_transposed[1])
 
-#plt.title("Развертка")
-#plt.scatter(data_polar_transposed[0],data_polar_transposed[1])
-#plt.show()
+plt.title("Развертка преобразованного множества\nРис.7")
+plt.scatter(data_polar_transposed[0],data_polar_transposed[1])
+plt.show()
 
-
+"Part 3 - Splines"
 
 x1=data_polar_transposed[0]
 y1=data_polar_transposed[1]
-
 
 count=len(x1)
 coef_a=[[0 for _ in range(4*count-4)] for _ in range(4*count-4)]
@@ -221,25 +229,16 @@ for i in range(count-2):
     coef_b[2*i+2]=y1[i+1]
 coef_b[0]=y1[0]
 coef_b[2*count-3]=y1[0]
-#print(np.transpose(coef_b))
-#print(np.transpose(y1))
 
 
 "Последние две строки, обеспечивающие гладкость в точке замыкания"
-coef_a[4*count-6][1]=1
-coef_a[4*count-6][2]=2*x1[0]
-coef_a[4*count-6][3]=3*pow(x1[0],2)
+coef_a[4*count-6][1]=1; coef_a[4*count-6][2]=2*x1[0]; coef_a[4*count-6][3]=3*pow(x1[0],2)
 
-coef_a[4*count-6][4*count-7]=-1
-coef_a[4*count-6][4*count-6]=-2*x1[count-1]
-coef_a[4*count-6][4*count-5]=-3*pow(x1[count-1],2)
+coef_a[4*count-6][4*count-7]=-1; coef_a[4*count-6][4*count-6]=-2*x1[count-1]; coef_a[4*count-6][4*count-5]=-3*pow(x1[count-1],2)
 
+coef_a[4*count-5][2]=2; coef_a[4*count-5][3]=6*x1[0]
 
-coef_a[4*count-5][2]=2
-coef_a[4*count-5][3]=6*x1[0]
-
-coef_a[4*count-5][4*count-6]=-2
-coef_a[4*count-5][4*count-5]=-6*x1[count-1]
+coef_a[4*count-5][4*count-6]=-2; coef_a[4*count-5][4*count-5]=-6*x1[count-1]
 
 #Равенство на внутренних точках
 for i in range(count-2+1):
@@ -277,42 +276,29 @@ for i in range(count-3+1):
 print("Матрица A")
 for i in range(4*count-4):
     print([round(j,3) for j in coef_a[i]])
-#print(np.matrix(coef_a))
+
 print("Матрица B")
 print(coef_b)
 
 m=np.linalg.solve(coef_a,coef_b)
 print("Коэффициенты M")
 print(m)
-print(np.allclose(np.dot(coef_a, m), coef_b))
-
-
-
-coordx=[0]*(count-1)
-for i in range(count-1):
-    coordx[i]=np.linspace(x1[i],x1[i+1],100)
-
-coordy=[0]*(count-1)
-for i in range(count-1):
-    coordy[i]=m[4*i]+m[4*i+1]*coordx[i]+m[4*i+2]*pow(coordx[i],2)+m[4*i+3]*pow(coordx[i],3)
-
-coord_data=list(zip(coordx, coordy))
-coordtemp_x=[0]*(100*count-100)
-coordtemp_y=[0]*(100*count-100)
-for i in range(count-1):
-    for j in range(100):
-        coordtemp_x[100*i+j]=coord_data[i][0][j]
-        coordtemp_y[100*i+j]=coord_data[i][1][j]
 
 
 "Реализация кусочной функции"
 
-funcs = [lambda u, n=i: m[4*n]+m[4*n+1]*u+m[4*n+2]*pow(u,2)+m[4*n+3]*pow(u,3) for i in range(count-1)]
-
-def piecewise_func_np(u):
+def piecewise_splines(u):
     conditions = [(x1[i]<=u)&(u<=x1[i+1]) for i in range(count-1)]
     functions = [lambda u, n=i: m[4*n]+m[4*n+1]*u+m[4*n+2]*pow(u,2)+m[4*n+3]*pow(u,3) for i in range(count-1)]
     return np.piecewise(u, conditions, functions)
+
+
+u_array = np.linspace(0,x1[count-1],100*(count-1))
+plt.plot(u_array,piecewise_splines(u_array),color='orange')
+plt.scatter(x1,y1)
+plt.title("Сплайн как кусочная функция\nРис.8")
+plt.show()
+
 
 doptheta=[0]*(4*count-4)
 dopord=[0]*(4*count-4)
@@ -323,34 +309,115 @@ for i in range(count-1):
     doptheta[4*i+3]=x1[i]+(4*coef_h[i])/5
 
 for i in range(count-1):
-    dopord[4*i]=piecewise_func_np(doptheta[4*i])
-    dopord[4*i+1]=piecewise_func_np(doptheta[4*i+1])
-    dopord[4*i+2]=piecewise_func_np(doptheta[4*i+2])
-    dopord[4*i+3]=piecewise_func_np(doptheta[4*i+3])
-
-u_array = np.linspace(0,x1[count-1],100*(count-1))
-#plt.plot(u_array,piecewise_func_np(u_array)-1,color='orange')
-#plt.plot(coordtemp_x,coordtemp_y,color='blue')
-#plt.scatter(x1,y1)
-#plt.title("Синий представляет построен по расчетным дискретным значениям\nОранжевый - по известной аналитической кусочной функции\n(сдвинут для отличия)")
-#plt.show()
+    dopord[4*i]=piecewise_splines(doptheta[4*i])
+    dopord[4*i+1]=piecewise_splines(doptheta[4*i+1])
+    dopord[4*i+2]=piecewise_splines(doptheta[4*i+2])
+    dopord[4*i+3]=piecewise_splines(doptheta[4*i+3])
 
 
-plt.plot(u_array,piecewise_func_np(u_array),color='orange')
+plt.plot(u_array,piecewise_splines(u_array),color='orange')
 plt.scatter(x1,y1)
 plt.scatter(doptheta,dopord)
-plt.title("Сплайн как кусочная функция с дополнительными точками")
+plt.title("Сплайн как кусочная функция с дополнительными точками\nрис.9")
 plt.show()
 
 
+"Part 4 - Return to original coordinate"
+"Возвращение в исходную систему координат путем параметризации сплайнов"\
+
 def Sfinal_x(u):
-    return piecewise_func_np(u)*(np.cos(u)*math.cos(phi)-np.sin(u)*math.sin(phi))+x0
+    return piecewise_splines(u)*(np.cos(u)*math.cos(phi)-np.sin(u)*math.sin(phi))+x0
 
 def Sfinal_y(u):
-    return piecewise_func_np(u)*(np.cos(u)*math.sin(phi)+np.sin(u)*math.cos(phi))+y0
+    return piecewise_splines(u)*(np.cos(u)*math.sin(phi)+np.sin(u)*math.cos(phi))+y0
+
+dopx=[0]*(4*count-4)
+dopy=[0]*(4*count-4)
+for i in range(4*count-4):
+    dopx[i]=dopord[i]*(np.cos(doptheta[i])*np.cos(phi)-np.sin(doptheta[i])*np.sin(phi))+x0
+    dopy[i]=dopord[i]*(np.cos(doptheta[i])*np.sin(phi)+np.sin(doptheta[i])*np.cos(phi))+y0
+
 
 
 exp_u=np.linspace(x1[0],x1[count-1],400*(count-1))
 plt.plot(Sfinal_x(exp_u),Sfinal_y(exp_u))
-plt.scatter(x,y)
+plt.title("Непрерывная замкнутая кривая - результат после\nвозвращения в исходную систему координат. Рис.10")
+plt.show()
+
+
+plt.plot(Sfinal_x(exp_u),Sfinal_y(exp_u))
+plt.scatter(x,y,color='black')
+plt.scatter(goodline_graph[0],goodline_graph[1])
+plt.scatter(dopx,dopy)
+plt.title("Результат интерполяции выпуклой оболочки непрерывной\nкривой с дополнительными точками. Рис.11")
+plt.show()
+
+
+print("\n//////////////////////////////////////\n")
+"Part 5 - grid for solve, distance to curve. No longer actual"
+
+bool_conditions=[0]*(count-1)
+for i in range(count-1):
+    if (m[4*i+3]*((-m[4*i+2])/(3*m[4*i+3]))**3+m[4*i+2]*((-m[4*i+2])/(3*m[4*i+3]))**2+m[4*i+1]*((-m[4*i+2])/(3*m[4*i+3]))+m[4*i]<=0):
+        if (m[4*i+3]>0): bool_conditions[i]=1
+    if (m[4*i+3]*((-m[4*i+2])/(3*m[4*i+3]))**3+m[4*i+2]*((-m[4*i+2])/(3*m[4*i+3]))**2+m[4*i+1]*((-m[4*i+2])/(3*m[4*i+3]))+m[4*i]>0):
+        if (m[4*i+3]<0): bool_conditions[i]=1
+
+
+potential_extr=[0]*(2*count-2)
+for i in range(count-1):
+    if (bool_conditions[i]!=0):
+        potential_extr[2*i]=(-m[4*i+2]-np.sqrt(m[4*i+2]**2-3*m[4*i+3]*m[4*i+1]))/(3*m[4*i+3])
+        potential_extr[2*i+1]=(-m[4*i+2]+np.sqrt(m[4*i+2]**2-3*m[4*i+3]*m[4*i+1]))/(3*m[4*i+3])
+
+extr=[0]*(2*count-2)
+for i in range(count-1):
+    if ((x1[i]<=potential_extr[2*i])&(potential_extr[2*i]<=x1[i+1])):
+        extr[2*i]=potential_extr[2*i]
+    if ((x1[i]<=potential_extr[2*i+1])&(potential_extr[2*i+1]<=x1[i+1])):
+        extr[2*i+1]=potential_extr[2*i+1]
+
+good_extr= list(filter(None, extr))
+good_extr.extend(x1)
+good_extr_result=piecewise_splines(good_extr)
+
+
+temporary_data=[good_extr,good_extr_result]
+temporary_data=np.transpose(temporary_data)
+temporary=sorted(temporary_data,key=lambda temporary_data:temporary_data[1])
+
+global_extr=temporary[len(temporary)-1][0]
+global_extr_result=temporary[len(temporary)-1][1]
+
+"Угол дальнейшего поворота"
+kpsi=(y0-Sfinal_y(global_extr))/(x0-Sfinal_x(global_extr))
+psi=math.atan(kpsi)
+
+
+def S_x(u):
+    return (Sfinal_x(u)-x0)*math.cos(psi)+(Sfinal_y(u)-y0)*math.sin(psi)
+
+def S_y(u):
+    return -(Sfinal_x(u)-x0)*math.sin(psi)+(Sfinal_y(u)-y0)*math.cos(psi)
+
+distance=S_x(global_extr)
+
+half=1.05*abs(distance)
+left_side=-half; right_side=half; up_side=half; down_side=-half
+
+
+plt.plot(Sfinal_x(exp_u),Sfinal_y(exp_u),color='blue')
+plt.scatter(goodline_graph[0],goodline_graph[1],color='blue')
+plt.scatter(x0,y0,color='red')
+plt.scatter(Sfinal_x(global_extr),Sfinal_y(global_extr),color='red')
+plt.plot([Sfinal_x(global_extr),x0],[Sfinal_y(global_extr),y0],linestyle='dotted',color='red')
+plt.plot(S_x(exp_u),S_y(exp_u),color='lightblue')
+plt.scatter(S_x(x1),S_y(x1),color='lightblue')
+plt.scatter(0,0,color='lightcoral')
+plt.scatter(distance,0,color='lightcoral')
+plt.plot([distance,0],[0,0],linestyle='dotted',color='lightcoral')
+plt.plot([right_side,down_side],[right_side,up_side],linestyle='dotted',color='lightcoral')
+plt.plot([right_side,up_side],[left_side,up_side],linestyle='dotted',color='lightcoral')
+plt.plot([left_side,up_side],[left_side,down_side],linestyle='dotted',color='lightcoral')
+plt.plot([left_side,down_side],[right_side,down_side],linestyle='dotted',color='lightcoral')
 plt.show()
